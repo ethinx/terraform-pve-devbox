@@ -69,8 +69,7 @@ variable "github_id" {
 }
 
 variable "os_password" {
-  type    = string
-  default = "linux"
+  type = string
 }
 
 // The PVE template name which will be cloned
