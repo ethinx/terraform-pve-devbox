@@ -1,3 +1,4 @@
+// PVE api address
 variable "proxmox_api_url" {
   type    = string
   default = "https://127.0.0.1:8006/api2/json"
@@ -8,6 +9,8 @@ variable "vm_count" {
   default = 1
 }
 
+// The vm will be named in format
+// ${kind}${count.index}.${project}.${colo}.${org_domain}
 variable "kind" {
   type    = string
   default = "general"
@@ -18,9 +21,14 @@ variable "project" {
   default = "pve"
 }
 
-variable "disk_size" {
+variable "colo" {
   type    = string
-  default = "60G"
+  default = "pek"
+}
+
+variable "org_domain" {
+  type    = string
+  default = "home.lab"
 }
 
 variable "cores" {
@@ -40,38 +48,24 @@ variable "memory" {
   default = 4096
 }
 
-variable "colo" {
+variable "disk_size" {
   type    = string
-  default = "pek"
+  default = "60G"
 }
 
-variable "org_domain" {
-  type    = string
-  default = "home.lab"
-}
-
-variable "github_id" {
+// The storage of the VM SCSI disk
+variable "disk_storage" {
   type = string
 }
 
-variable "clone_template" {
-  type    = string
-  default = "ubuntu-22.04-cloudimg-template"
+// The storage of the cloud-init data files
+variable "ci_storage" {
+  type = string
 }
 
-variable "full_clone" {
-  type    = bool
-  default = true
-}
-
-variable "pve_node" {
-  type    = string
-  default = "rome"
-}
-
-variable "onboot" {
-  type    = bool
-  default = true
+// The default OS username will be the github_id
+variable "github_id" {
+  type = string
 }
 
 variable "os_password" {
@@ -79,21 +73,42 @@ variable "os_password" {
   default = "linux"
 }
 
+// The PVE template name which will be cloned
+variable "clone_template" {
+  type = string
+}
+
+// https://pve.proxmox.com/pve-docs/chapter-qm.html#qm_copy_and_clone
+variable "full_clone" {
+  type    = bool
+  default = true
+}
+
+// The node name where the VM will be placed
+variable "pve_node" {
+  type = string
+}
+
+// Auto start the VM after PVE boot up
+variable "onboot" {
+  type    = bool
+  default = true
+}
+
+// The host bridge name that the VM will be bonded to
 variable "network_bridge_nic" {
   type    = string
   default = "vmbr0"
 }
 
-variable "searchdomain" {
-  type    = string
-  default = ""
-}
-
+// manually set the VM's nameserver
 variable "nameserver" {
   type    = string
   default = ""
 }
 
+// Set apt mirror here
+// https://cloudinit.readthedocs.io/en/latest/topics/examples.html#add-primary-apt-repositories
 variable "apt_primary_mirror" {
   type    = string
   default = "https://mirrors.tuna.tsinghua.edu.cn/ubuntu/"

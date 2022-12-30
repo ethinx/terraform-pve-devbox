@@ -73,7 +73,6 @@ resource "local_file" "cloud-init-network-config" {
     colo : "${var.colo}",
     org_domain : "${var.org_domain}",
     nameserver : var.nameserver,
-    searchdomain : var.searchdomain,
   })
   filename = "/var/lib/vz/snippets/pve-devbox-network-config-${var.kind}${count.index}.${var.project}.${var.colo}.yml"
 }
@@ -103,16 +102,13 @@ resource "proxmox_vm_qemu" "cloud-init-vm" {
 
   disk {
     type    = "scsi"
-    storage = "pve"
+    storage = var.disk_storage
     size    = var.disk_size
     cache   = "writeback"
   }
 
   cicustom                = "user=local:snippets/pve-devbox-user-data-${var.kind}${count.index}.${var.project}.${var.colo}.yml,network=local:snippets/pve-devbox-network-config-${var.kind}${count.index}.${var.project}.${var.colo}.yml"
-  cloudinit_cdrom_storage = "pve"
-
-  searchdomain = var.searchdomain
-  nameserver   = var.nameserver
+  cloudinit_cdrom_storage = var.ci_storage
 
   network {
     model   = "virtio"
