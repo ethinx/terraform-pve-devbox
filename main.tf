@@ -8,12 +8,20 @@ terraform {
       source  = "ivoronin/macaddress"
       version = "0.3.0"
     }
+    powerdns = {
+      source = "pan-net/powerdns"
+    }
   }
 }
 
 provider "proxmox" {
   pm_api_url      = var.proxmox_api_url
   pm_tls_insecure = true
+}
+
+provider "powerdns" {
+  api_key    = var.pdns_api_key
+  server_url = var.pdns_server_url
 }
 
 data "http" "github-pub-keys" {
@@ -46,9 +54,11 @@ resource "local_file" "cloud-init-user-data" {
     {
       idx : "${count.index}",
       kind : "${var.kind}",
+      env : "${var.env}",
       project : "${var.project}",
       colo : "${var.colo}",
       org_domain : "${var.org_domain}",
+      nameserver : var.nameserver,
       github_id : var.github_id,
       os_password : var.os_password,
       apt_primary_mirror : var.apt_primary_mirror,
@@ -83,7 +93,7 @@ output "macs" {
 
 resource "proxmox_vm_qemu" "cloud-init-vm" {
   count       = var.vm_count
-  name        = "${var.kind}${count.index}.${var.project}.${var.colo}.${var.org_domain}"
+  name        = "${var.kind}${count.index}.${var.env}.${var.project}.${var.colo}.${var.org_domain}"
   target_node = var.pve_node
   clone       = var.clone_template
   full_clone  = var.full_clone
@@ -138,6 +148,16 @@ resource "proxmox_vm_qemu" "cloud-init-vm" {
       "ip a"
     ]
   }
+}
+
+resource "powerdns_record" "vm-dns" {
+  count   = var.vm_count
+  zone    = "${var.org_domain}."
+  name    = "${proxmox_vm_qemu.cloud-init-vm[count.index].name}."
+  records = ["${proxmox_vm_qemu.cloud-init-vm[count.index].ssh_host}"]
+  ttl     = 300
+  type    = "A"
+  set_ptr = true
 }
 
 output "ips" {

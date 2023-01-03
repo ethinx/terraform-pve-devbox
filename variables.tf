@@ -4,6 +4,15 @@ variable "proxmox_api_url" {
   default = "https://127.0.0.1:8006/api2/json"
 }
 
+variable "pdns_api_key" {
+  type = string
+}
+
+variable "pdns_server_url" {
+  type    = string
+  default = "http://127.0.0.1:8081"
+}
+
 variable "vm_count" {
   type    = number
   default = 1
@@ -14,6 +23,11 @@ variable "vm_count" {
 variable "kind" {
   type    = string
   default = "general"
+}
+
+variable "env" {
+  type    = string
+  default = "dev"
 }
 
 variable "project" {
