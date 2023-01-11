@@ -32,16 +32,6 @@ data "local_file" "ssh-pub-key" {
   filename = pathexpand("~/.ssh/id_rsa.pub")
 }
 
-# RSA key of size 4096 bits
-resource "tls_private_key" "cluster-ssh-secret-key" {
-  algorithm = "RSA"
-  rsa_bits  = 4096
-}
-
-data "tls_public_key" "cluster-ssh-pub-key" {
-  private_key_openssh = tls_private_key.cluster-ssh-secret-key.private_key_openssh
-}
-
 resource "macaddress" "vm-macs" {
   count = var.vm_count
   // 52:54:00 - https://gist.github.com/ashee/9241ab6281e6f4d1ef9b
@@ -65,8 +55,8 @@ resource "local_file" "cloud-init-user-data" {
       apt_security_mirror : var.apt_security_mirror,
       github_pub_keys : split("\n", data.http.github-pub-keys.response_body),
       local_pub_key : data.local_file.ssh-pub-key,
-      cluster_ssh_pub_key    = data.tls_public_key.cluster-ssh-pub-key.public_key_openssh,
-      cluster_ssh_secret_key = tls_private_key.cluster-ssh-secret-key.private_key_openssh,
+      cluster_ssh_public_key  = var.host_group_ssh_public_key
+      cluster_ssh_private_key = var.host_group_ssh_private_key
     }
   )
 

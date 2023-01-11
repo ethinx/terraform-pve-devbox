@@ -131,3 +131,11 @@ variable "apt_security_mirror" {
   type    = string
   default = "https://mirrors.tuna.tsinghua.edu.cn/ubuntu/"
 }
+
+variable "host_group_ssh_public_key" {
+  type = string
+}
+
+variable "host_group_ssh_private_key" {
+  type = string
+}
