@@ -60,7 +60,7 @@ resource "local_file" "cloud-init-user-data" {
     }
   )
 
-  filename = "/var/lib/vz/snippets/pve-devbox-user-data-${var.kind}${count.index}.${var.project}.${var.colo}.yml"
+  filename = "/var/lib/vz/snippets/pve-devbox-user-data-${var.kind}${count.index}.${var.env}.${var.project}.${var.colo}.yml"
 }
 
 resource "local_file" "cloud-init-network-config" {
@@ -74,7 +74,7 @@ resource "local_file" "cloud-init-network-config" {
     org_domain : "${var.org_domain}",
     nameserver : var.nameserver,
   })
-  filename = "/var/lib/vz/snippets/pve-devbox-network-config-${var.kind}${count.index}.${var.project}.${var.colo}.yml"
+  filename = "/var/lib/vz/snippets/pve-devbox-network-config-${var.kind}${count.index}.${var.env}.${var.project}.${var.colo}.yml"
 }
 
 output "macs" {
@@ -107,7 +107,7 @@ resource "proxmox_vm_qemu" "cloud-init-vm" {
     cache   = "writeback"
   }
 
-  cicustom                = "user=local:snippets/pve-devbox-user-data-${var.kind}${count.index}.${var.project}.${var.colo}.yml,network=local:snippets/pve-devbox-network-config-${var.kind}${count.index}.${var.project}.${var.colo}.yml"
+  cicustom                = "user=local:snippets/pve-devbox-user-data-${var.kind}${count.index}.${var.env}.${var.project}.${var.colo}.yml,network=local:snippets/pve-devbox-network-config-${var.kind}${count.index}.${var.env}.${var.project}.${var.colo}.yml"
   cloudinit_cdrom_storage = var.ci_storage
 
   network {
