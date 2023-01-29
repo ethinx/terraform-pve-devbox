@@ -82,6 +82,10 @@ output "macs" {
 }
 
 resource "proxmox_vm_qemu" "cloud-init-vm" {
+  depends_on = [
+    local_file.cloud-init-user-data,
+    local_file.cloud-init-network-config,
+  ]
   count       = var.vm_count
   name        = "${var.kind}${count.index}.${var.env}.${var.project}.${var.colo}.${var.org_domain}"
   target_node = var.pve_node
