@@ -14,16 +14,6 @@ terraform {
   }
 }
 
-provider "proxmox" {
-  pm_api_url      = var.proxmox_api_url
-  pm_tls_insecure = true
-}
-
-provider "powerdns" {
-  api_key    = var.pdns_api_key
-  server_url = var.pdns_server_url
-}
-
 data "http" "github-pub-keys" {
   url = "https://github.com/${var.github_id}.keys"
 }
