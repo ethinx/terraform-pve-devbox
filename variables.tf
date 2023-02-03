@@ -135,3 +135,8 @@ variable "host_group_ssh_public_key" {
 variable "host_group_ssh_private_key" {
   type = string
 }
+
+variable "custom_ca" {
+  type    = string
+  default = ""
+}

@@ -47,6 +47,7 @@ resource "local_file" "cloud-init-user-data" {
       local_pub_key : data.local_file.ssh-pub-key,
       cluster_ssh_public_key  = var.host_group_ssh_public_key
       cluster_ssh_private_key = var.host_group_ssh_private_key
+      custom_ca               = fileexists("/etc/squid/bump.crt") ? file("/etc/squid/bump.crt") : var.custom_ca
     }
   )
 
